@@ -1,0 +1,7 @@
+---
+#
+# tasks file for flaskapp-ansible-role
+#
+
+- include: flaskapp_ubuntu.yml 
+  when: flaskapp_ansible_role_state == "present"

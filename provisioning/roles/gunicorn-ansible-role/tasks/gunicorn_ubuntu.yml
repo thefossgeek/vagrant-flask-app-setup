@@ -1,0 +1,58 @@
+---
+#
+# tasks file for gunicorn-ansible-role
+#
+- name: Ensure gunicorn is installed specific version.
+  pip:
+    name: gunicorn
+    state: present
+    version: "{{ gunicorn_version }}"
+  when: gunicorn_version != 'latest'
+
+- name: Ensure gunicorn is installed latest version.
+  pip:
+    name: gunicorn
+    state: present
+  when: gunicorn_version == 'latest'
+
+- name: Create gunicorn log directory
+  file:
+    path: "{{ gunicorn_log_dir }}"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    mode: 0775
+
+- name: Create gunicorn socket directory
+  file:
+    path: "{{ gunicorn_socket_dir }}"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    mode: 0775
+
+- name: Create gunicorn config directory
+  file: 
+    name: "{{ gunicorn_config_dir }}" 
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    mode: 0775
+
+- name: Install gunicorn config
+  template: 
+    src: gunicorn.py.j2 
+    dest: "{{ gunicorn_config_dir }}/{{ gunicorn_app_name }}.py"
+  notify: Restart gunicorn
+
+- name: Install systemd service configuration 
+  template: 
+    src: systemd.conf.j2
+    dest: "/etc/systemd/system/{{ gunicorn_app_name }}.service"
+    mode: 0755
+  notify: Restart gunicorn
+
+- name: Enable gunicorn service
+  service:
+    name: "gunicorn.service"
+    enabled: yes

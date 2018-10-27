@@ -1,0 +1,68 @@
+---
+#
+# defaults file for supervisor-ansible-role
+#
+
+# Use this variable to disable this role installation if required.
+# present will install the role on target machine
+supervisor_ansible_role_state: present
+
+# Install a specific version of Supervisor by setting it here (e.g. '3.3.1').
+supervisor_version: latest
+
+# Name of the application
+supervisor_app_name: "supervisor"
+
+# Systemd daemon name for application
+supervisor_daemon_name: "supervisord"
+
+# Supervisor when it's installed and/or after a system boot.
+supervisor_started: true
+supervisor_enabled: true
+
+# The user and group used to run the application
+user_name: "devops"
+group_name: "devops"
+supervisor_user: "{{ user_name }}"
+supervisor_group: "{{ group_name }}"
+supervisor_password: "{{ user_name }}"
+
+# Supervisor config, log and bin directory path
+supervisor_config_path: /etc/supervisor
+supervisor_log_dir: /var/log/supervisor
+supervisor_bin_path: /usr/local/bin/supervisord
+supervisorctl_bin_path: /usr/local/bin/supervisorctl
+
+# A list of `program`s Supervisor will control. Example commented out below.
+supervisor_programs:
+ - name: 'gunicorn'
+   command: gunicorn app:app -c /etc/gunicorn/gunicorn.py --pythonpath /webapps/devops
+   state: present
+   configuration: |
+     autostart=true
+     autorestart=true
+     startretries=1
+     startsecs=1
+     redirect_stderr=true
+     stderr_logfile=/var/log/gunicorn-err.log
+     stdout_logfile=/var/log/gunicorn-out.log
+     user=root
+     killasgroup=true
+     stopasgroup=true
+
+supervisor_nodaemon: false
+
+# Whether to enable the UNIX socket-based HTTP server, and the socket 
+# file to use if enabled.
+supervisor_unix_http_server_enable: true
+supervisor_unix_http_server_socket_path: /var/run/supervisor.sock
+
+# hether to enable the TCP-based HTTP server, and the interface and port on 
+# which the server should listen if enabled.
+supervisor_inet_http_server_enable: false
+supervisor_inet_http_server_port: '*:9001'
+
+# Password protection can be turned off for Unix HTTP and Inet HTTP by setting these variables to `false`, 
+# This would disable password protection for `supervisorctl` as well.
+supervisor_unix_http_server_password_protect: true
+supervisor_inet_http_server_password_protect: true

@@ -1,0 +1,44 @@
+---
+#
+# tasks file for nginx-ansible-role
+#
+- name: install nginx
+  package:
+    name: "{{ nginx_app_name }}"
+    state: latest
+
+- name: Create gunicorn log directory
+  file:
+    path: "{{ nginx_log_dir }}"
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    mode: 0775
+
+#- name: Create the Nginx configuration file (non-SSL)
+#  template: 
+#    src: nginx.conf.j2
+#    dest: /etc/nginx/nginx.conf
+
+- name: Create the Nginx configuration file (non-SSL)
+  template: 
+    src: site.conf.j2 
+    dest: "{{ nginx_site_path }}/devops"
+
+- name: Ensure that the default site is removed
+  file: 
+    path: "{{ nginx_site_path }}/default" 
+    state: absent
+
+- name: Ensure that the application site is enabled
+  file: 
+    src: "{{ nginx_site_path }}/devops"
+    dest: /etc/nginx/sites-available/devops
+    state: link
+  notify: Reload Nginx
+
+- name: Ensure Nginx service is started, enable service on restart
+  service: 
+    name: nginx 
+    state: restarted 
+    enabled: yes

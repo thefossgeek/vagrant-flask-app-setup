@@ -1,0 +1,7 @@
+---
+# configuration file used by Ansible and the Vagrantfile
+base_image: 'ubuntu/xenial64'
+ip_address: '10.10.10.20'
+vm_name: 'devops001'
+suffix: '10-10-10-20'
+server_domain: 'vbox.local'

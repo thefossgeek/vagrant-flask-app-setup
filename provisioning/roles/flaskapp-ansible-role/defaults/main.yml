@@ -1,0 +1,48 @@
+---
+#
+# defaults file for flaskapp-ansible-role
+#
+
+# Use this variable to disable this role installation if required.
+# present will install the role on target machine
+flaskapp_ansible_role_state: present
+
+
+# The list of system packages required to build/run application.
+flaskapp_app_packages:
+  - build-essential
+  - vim
+  - git
+  - unzip
+  - curl
+  - wget
+  - openssl
+  - libssl-dev
+  - libffi-dev
+  - python
+  - python-dev
+  - python-pip
+  - python-pycurl
+#  - systemd 
+#  - libpam-systemd
+
+# The user and group used to run the Flask application
+user_name: "devops"
+group_name: "devops"
+flaskapp_user: "{{ user_name }}"
+flaskapp_group: "{{ group_name }}"
+
+# home, virtual env, project and requirement file path for project
+flaskapp_home_path: "/webapps"
+flaskapp_virtualenv_path: "{{ flaskapp_home_path }}/venv"
+flaskapp_project_path: "{{ flaskapp_home_path }}/devops"
+flaskapp_requirements_file: "{{ flaskapp_project_path }}/requirements.txt"
+
+## Additional application list
+flaskapp_additional_app_packages:
+  - wheel
+  - flask
+
+# The git url where the flask application needs to be clone.
+flaskapp_repo_url: 'https://bitbucket.org/azneita/devops-challenge.git'
+

@@ -1,0 +1,76 @@
+---
+#
+# tasks file for supervisor-ansible-role
+#
+
+- name: Ensure Supervisor is installed specific version.
+  pip:
+    name: "{{ supervisor_app_name }}"
+    state: present
+    version: "{{ supervisor_version }}"
+  when: supervisor_version != 'latest'
+
+- name: Ensure Supervisor is installed latest version.
+  pip:
+    name: supervisor
+    state: present
+  when: supervisor_version == 'latest'
+
+- name: Ensure Supervisor log dir exists.
+  file:
+    path: "{{ supervisor_log_dir }}"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    mode: 0775
+
+- name: Ensure Supervisor config paths are present.
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+  with_items:
+    - "{{ supervisor_config_path }}"
+    - "{{ supervisor_config_path }}/conf.d"
+
+- name: Ensure Supervisor configuration is present.
+  template:
+    src: supervisord.conf.j2
+    dest: "{{ supervisor_config_path }}/{{ supervisor_daemon_name }}.conf"
+    mode: 0644
+  notify: restart supervisor
+
+- name: Ensure Supervisor program configs are present.
+  template:
+    src: program.conf.j2
+    dest: "{{ supervisor_config_path }}/conf.d/{{ item.name }}.conf"
+    force: true
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    mode: 0644
+  when: item.state|default('present') != 'absent'
+  with_items: "{{ supervisor_programs }}"
+  notify: restart supervisor
+
+- name: Copy Supervisor unit file into place (for systemd systems).
+  template:
+    src: supervisord.unit.j2
+    dest: "/etc/systemd/system/{{ supervisor_daemon_name }}.service"
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    mode: 0644
+  notify: restart supervisor
+
+- name: Ensure Supervisor is started if configured.
+  service:
+    name: supervisord
+    state: started
+  when: supervisor_started
+
+- name: Ensure Supervisor is enabled at boot if configured.
+  service:
+    name: supervisord
+    enabled: true
+  when: supervisor_enabled

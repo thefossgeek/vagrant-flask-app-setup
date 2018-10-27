@@ -1,0 +1,29 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    user_name: "devops"
+    group_name: "devops"
+  vars_files:
+    - "../vagrant.yml" 
+
+#################################
+# Pre Task Section
+################################  
+  pre_tasks:
+    - shell: echo 'Beginning to configure flask app...'
+
+#################################
+# Role Section
+################################  
+  roles:
+    - flaskapp-ansible-role  
+    - gunicorn-ansible-role
+    - supervisor-ansible-role  
+    - nginx-ansible-role  
+
+#################################
+# Post Task Section
+################################  
+  post_tasks:
+    - shell: echo 'Done configuring flask app...'

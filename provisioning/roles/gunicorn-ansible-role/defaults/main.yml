@@ -1,0 +1,72 @@
+---
+#
+# defaults file for gunicorn-ansible-role
+#
+
+# Use this variable to disable this role installation if required.
+# present will install the role on target machine
+gunicorn_ansible_role_state: present 
+
+# user and group to run gunicorn as. will create if doesn't exist. (default: "devops")
+user_name: "devops"
+group_name: "devops"
+
+# gunicorn config, log and socket directory path
+gunicorn_config_dir: "/etc/gunicorn"
+gunicorn_log_dir: "/var/log/gunicorn"
+gunicorn_socket_dir: "/var/run/gunicorn"
+
+# start on string for systemd WantedBy (default: "multi-user.target")
+gunicorn_start_on: "multi-user.target"
+
+# Install a specific version of gunicorn by setting it(default: "latest")
+gunicorn_version: latest
+
+# name of app which will be used as the name of the service (default "gunicorn")
+gunicorn_app_name: "gunicorn"
+
+# where to chdir into before loading app
+gunicorn_app_dir: "/webapps/devops" 
+
+# module to import containing application 
+gunicorn_wsgi: 'app:app'
+
+# dynamically generate workers based on the number of CPUs. 
+# This overrides the value of gunicorn_workers (default: False).
+gunicorn_dynamic_workers: True
+
+# Coefficient for scaling workers based on CPU. 
+# When this value is set along with gunicorn_dynamic_workers, 
+# gunicorn will fork (gunicorn_cpu_coefficient * # of CPUs) + 1 workers (default: 2).
+gunicorn_cpu_coefficient: 2
+
+#  number of workers to pre-fork. This value will be overridden if 
+#  gunicorn_dynamic_workers is True (default: 8).
+gunicorn_workers: 8
+
+# access log file location (default: "/var/log/gunicorn/error.log")
+gunicorn_errorlog: "/var/log/gunicorn/error.log"
+
+# error log file location (default: "/var/log/gunicorn/access.log")
+gunicorn_accesslog: "/var/log/gunicorn/access.log"
+
+# address and port to bind to (default: "127.0.0.1:8000")
+gunicorn_bind: "127.0.0.1:8000"
+
+# reload after each request (default: False)
+gunicorn_reload: False
+
+#  log level (default: "info")
+gunicorn_loglevel: "info"
+gunicorn_private_tmp: True
+
+# send stdout and stderr output to syslog (default: True)
+gunicorn_syslog: True
+
+gunicorn_logrotate: True
+
+# Rotate log files at this interval
+gunicorn_logrotate_interval: daily
+
+# Number of backlog files to keep
+gunicorn_logrotate_backlog_size: 366

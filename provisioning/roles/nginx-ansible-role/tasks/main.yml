@@ -1,0 +1,9 @@
+---
+#
+# tasks file for nginx-ansible-role
+# 
+- include: nginx_ubuntu.yml 
+  when: nginx_ansible_role_state == "present"
+
+- include: nginx-logrotate.yml 
+

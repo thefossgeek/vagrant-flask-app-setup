@@ -1,0 +1,15 @@
+---
+#
+# handlers file for nginx-ansible-role
+#
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
+
+- name: Reload Nginx
+  service: name=nginx state=reloaded
+
+- name: Stop Nginx
+  service: name=nginx state=stopped
+

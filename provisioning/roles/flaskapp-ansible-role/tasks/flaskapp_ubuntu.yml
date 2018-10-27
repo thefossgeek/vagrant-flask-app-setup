@@ -1,0 +1,57 @@
+---
+#
+# tasks file for flaskapp-ansible-role
+#
+- name: Run "apt get update" 
+  apt:
+    update_cache: yes
+
+- name: Install packages required to build/run application
+  apt: 
+    name: "{{ flaskapp_app_packages }}"
+    state: latest
+
+- name: Install additional package
+  pip:
+    name: "{{ flaskapp_additional_app_packages }}"
+    state: latest
+
+
+- name: Create Group
+  group:
+    name: "{{ flaskapp_group }}"
+    system: yes
+    state: present
+
+- name: Create User
+  user:
+    name: "{{ flaskapp_user }}"
+    create_home: no
+    system: yes
+    groups: "{{ flaskapp_group }},www-data"
+    append: yes
+    state: present
+
+- name: create a directory if it doesn't exist
+  file:
+    path: "{{ flaskapp_home_path }}"
+    state: directory
+    owner: "{{ flaskapp_user }}"
+    group: "{{ flaskapp_group }}"
+    mode: 0755
+
+- name: GIT clone Flask Application
+  git:
+    repo: "{{ flaskapp_repo_url }}"
+    dest: "{{ flaskapp_project_path }}"
+
+- name: Delete all existing .pyc files
+  command: find . -name '*.pyc' -delete
+  args:
+    chdir: "{{ flaskapp_project_path }}"
+  changed_when: false
+
+- name: Install package from requirements.txt
+  pip:
+    requirements: "{{ flaskapp_requirements_file }}"
+

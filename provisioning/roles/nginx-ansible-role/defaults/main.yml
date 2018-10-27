@@ -1,0 +1,42 @@
+---
+#
+# defaults file for nginx-ansible-role
+#
+# Use this variable to disable this role installation if required.
+# present will install the role on target machine
+nginx_ansible_role_state: present
+
+nginx_port: 80
+
+# To update all packages installed by this roles, set `nginx_package_state` to `latest`.
+nginx_package_state: present
+
+nginx_app_name: "nginx"
+
+user_name: "devops"
+group_name: "devops"
+
+nginx_user: "{{ user_name }}"
+nginx_group: "{{ group_name }}"
+
+# nginx config, log and socket directory path
+nginx_config_dir: "/etc/nginx"
+nginx_add_config_dir: "/etc/nginx/conf.d"
+nginx_log_dir: "/var/log/nginx"
+nginx_socket_dir: ""
+
+nginx_pid: "/var/run/nginx.pid"
+nginx_sbin_path: "/usr/sbin/nginx"
+
+nginx_site_path: "/etc/nginx/sites-enabled"
+
+nginx_hostname: "{{ vm_name }}-{{ suffix }}"
+
+nginx_access_log: /var/log/nginx/access.log
+nginx_error_log: /var/log/nginx/error.log
+
+# Rotate log files at this interval
+nginx_logrotate_interval: daily
+
+# Number of backlog files to keep
+nginx_logrotate_backlog_size: 366

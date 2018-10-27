@@ -1,0 +1,9 @@
+---
+#
+# tasks file for gunicorn-ansible-role
+#
+- include: gunicorn_ubuntu.yml
+  when: gunicorn_ansible_role_state == 'present'
+
+- include: gunicorn_logrotate.yml
+  when: gunicorn_logrotate == True

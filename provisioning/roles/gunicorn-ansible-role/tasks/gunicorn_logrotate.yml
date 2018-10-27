@@ -1,0 +1,10 @@
+---
+#
+# tasks file for nginx-ansible-role
+#
+- name: Nginx logrotate configuration
+  become: yes
+  template:
+    backup: no
+    src: logrotated-gunicorn.j2
+    dest: /etc/logrotate.d/nginx

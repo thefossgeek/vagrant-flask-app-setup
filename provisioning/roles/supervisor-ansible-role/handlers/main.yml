@@ -1,0 +1,10 @@
+---
+#
+# handlers file for supervisor-ansible-role
+#
+
+- name: restart supervisor
+  service: 
+    name: "{{ supervisor_daemon_name }}" 
+    state: restarted
+  when: supervisor_started
